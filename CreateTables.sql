@@ -26,7 +26,8 @@ CREATE TABLE Track (
     label VARCHAR(255),
     name VARCHAR(255),
     URI VARCHAR(255),
-    duration INT
+    duration INT,
+    CHECK (duration>0)
 );
 
 CREATE TABLE Made_a (
@@ -44,5 +45,3 @@ CREATE TABLE Trending (
     PRIMARY KEY (track_id, peak_rank),
     FOREIGN KEY (track_id) REFERENCES Track(id)
 );
-
-
