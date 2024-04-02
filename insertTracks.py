@@ -14,15 +14,16 @@ for track in tracks_data:
     track_uri = track['trackUri'].replace("'", '"')
     labels = ", ".join(track["labels"]).replace("'", '"')
     release_date = track['releaseDate'].replace("'", '"')
-
-    # Add track data to the SQL statement
-    sql_statement += f"('{track_name}', '{track_uri}', '{labels}', '{release_date}', {track['duration']}, {track['playcount']}),\n"
+    if release_date == '':
+        sql_statement += f"('{track_name}', '{track_uri}', '{labels}', NULL, {track['duration']}, {track['playcount']}),\n"
+    else:
+        sql_statement += f"('{track_name}', '{track_uri}', '{labels}', '{release_date}', {track['duration']}, {track['playcount']}),\n"
 
 # Remove the trailing comma and newline
 sql_statement = sql_statement.rstrip(',\n') + ';'
 
 # Write the SQL statement to a new file
-with open('tracks_inserts.sql', 'w') as sql_file:
+with open('tracks_inserts.sql', 'w', encoding='utf-8') as sql_file:
     sql_file.write(sql_statement)
 
 print("SQL statement saved to tracks_inserts.sql")
