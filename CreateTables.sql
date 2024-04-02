@@ -65,7 +65,7 @@ CREATE TABLE ContentRating (
     PRIMARY KEY (contentRatingName)
 );
 
-CREATE TABLE TrackContentRating ( -- connect the track to the genres (one to many)
+CREATE TABLE TrackContentRating ( -- connect the track to the contentRating (one to many)
     TrackID INT,
     contentRatingName VARCHAR(255),
     PRIMARY KEY (TrackID, contentRatingName),
