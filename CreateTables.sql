@@ -39,7 +39,8 @@ CREATE TABLE Tracks (
     ReleaseDate DATE,
     Duration INT,
     PlayCount BIGINT,
-    PRIMARY KEY (TrackID)
+    PRIMARY KEY (TrackID),
+    CHECK (Duration >= 0 AND PlayCount >= 0)
 );
 
 CREATE TABLE TrackCreditors ( -- connect the creditors with the track (many to many)
@@ -57,7 +58,8 @@ CREATE TABLE TrendingDates ( -- Weak entity connected to Tracks
 	AppearancesOnChart INT,
     ConsecutiveAppearancesOnChart INT,
     PRIMARY KEY (TrackID, TrendingDate),
-    FOREIGN KEY (TrackID) REFERENCES Tracks(TrackID) ON DELETE CASCADE 
+    FOREIGN KEY (TrackID) REFERENCES Tracks(TrackID) ON DELETE CASCADE,
+    CHECK (PeakRank > 0 AND AppearancesOnChart > 0 AND ConsecutiveAppearancesOnChart>0)
 );
 
 CREATE TABLE ContentRating (
