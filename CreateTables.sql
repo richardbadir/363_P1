@@ -3,45 +3,75 @@ CREATE DATABASE `Music`;
 USE `Music`;
 
 
-CREATE TABLE Person (
-    id INT PRIMARY KEY,
-    URI VARCHAR(255)
+CREATE TABLE Creditors ( -- A performer, producer and producer ISA creditor
+    CreditorID INT AUTO_INCREMENT,
+    Name VARCHAR(255),
+    Role VARCHAR(50),
+    PRIMARY KEY (CreditorID)
 );
 
-CREATE TABLE Creator (
-    id INT PRIMARY KEY,
-    name VARCHAR(255),
-    role VARCHAR(255),
-    FOREIGN KEY (id) REFERENCES Person(id)
+CREATE TABLE Performers (
+    CreditorID INT,
+    PerformerURI VARCHAR(20),
+    PRIMARY KEY (CreditorID),
+    FOREIGN KEY (CreditorID) REFERENCES Creditors(CreditorID)
 );
 
-CREATE TABLE Artist (
-    id INT PRIMARY KEY,
-    name VARCHAR(255),
-    FOREIGN KEY (id) REFERENCES Person(id)
+CREATE TABLE Producers (
+    CreditorID INT,
+    ProducerURI VARCHAR(20),
+    PRIMARY KEY (CreditorID),
+    FOREIGN KEY (CreditorID) REFERENCES Creditors(CreditorID)
 );
 
-CREATE TABLE Track (
-    id INT PRIMARY KEY,
-    label VARCHAR(255),
-    name VARCHAR(255),
-    URI VARCHAR(255),
-    duration INT,
-    CHECK (duration>0)
+CREATE TABLE Writers (
+    CreditorID INT,
+    WriterURI VARCHAR(20),
+    PRIMARY KEY (CreditorID),
+    FOREIGN KEY (CreditorID) REFERENCES Creditors(CreditorID)
 );
 
-CREATE TABLE Made_a (
-    track_id INT,
-    person_id INT,
-    PRIMARY KEY (track_id, person_id),
-    FOREIGN KEY (track_id) REFERENCES Track(id),
-    FOREIGN KEY (person_id) REFERENCES Person(id)
+CREATE TABLE Tracks (
+    TrackID INT AUTO_INCREMENT,
+    TrackName VARCHAR(255),
+    TrackUri VARCHAR(255) UNIQUE,
+    Labels TEXT,
+    ReleaseDate DATE,
+    ContentRating VARCHAR(50),
+    Duration INT,
+    PlayCount BIGINT,
+    PRIMARY KEY (TrackID)
 );
 
-CREATE TABLE Trending (
-    track_id INT,
-    peak_rank INT,
-    Trending_weeks INT,
-    PRIMARY KEY (track_id, peak_rank),
-    FOREIGN KEY (track_id) REFERENCES Track(id)
+CREATE TABLE TrackCreditors ( -- connect the creditors with the track (many to many)
+    TrackID INT,
+    CreditorID INT,
+    PRIMARY KEY (TrackID, CreditorID),
+    FOREIGN KEY (TrackID) REFERENCES Tracks(TrackID) ,
+    FOREIGN KEY (CreditorID) REFERENCES Creditors(CreditorID)
 );
+
+CREATE TABLE TrendingDates ( -- Weak entity connected to Tracks
+    TrackID INT,
+    TrendingDate DATE,
+	PeakRank INT,
+	AppearancesOnChart INT,
+    ConsecutiveAppearancesOnChart INT,
+    PRIMARY KEY (TrackID, TrendingDate),
+    FOREIGN KEY (TrackID) REFERENCES Tracks(TrackID) ON DELETE CASCADE 
+);
+
+CREATE TABLE ContentRating (
+    contentRatingID INT AUTO_INCREMENT,
+    contentRatingName VARCHAR(255),
+    PRIMARY KEY (contentRatingID)
+);
+
+CREATE TABLE TrackContentRating ( -- connect the track to the genres (many to many)
+    TrackID INT,
+    contentRatingID INT,
+    PRIMARY KEY (TrackID, contentRatingID),
+    FOREIGN KEY (TrackID) REFERENCES Tracks(TrackID) ON DELETE CASCADE,
+    FOREIGN KEY (contentRatingID) REFERENCES ContentRating(contentRatingID)
+);
+
