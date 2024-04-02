@@ -37,7 +37,6 @@ CREATE TABLE Tracks (
     TrackUri VARCHAR(255) UNIQUE,
     Labels TEXT,
     ReleaseDate DATE,
-    ContentRating VARCHAR(50),
     Duration INT,
     PlayCount BIGINT,
     PRIMARY KEY (TrackID)
@@ -62,16 +61,15 @@ CREATE TABLE TrendingDates ( -- Weak entity connected to Tracks
 );
 
 CREATE TABLE ContentRating (
-    contentRatingID INT AUTO_INCREMENT,
     contentRatingName VARCHAR(255),
-    PRIMARY KEY (contentRatingID)
+    PRIMARY KEY (contentRatingName)
 );
 
-CREATE TABLE TrackContentRating ( -- connect the track to the genres (many to many)
+CREATE TABLE TrackContentRating ( -- connect the track to the genres (one to many)
     TrackID INT,
-    contentRatingID INT,
-    PRIMARY KEY (TrackID, contentRatingID),
+    contentRatingName VARCHAR(255),
+    PRIMARY KEY (TrackID, contentRatingName),
     FOREIGN KEY (TrackID) REFERENCES Tracks(TrackID) ON DELETE CASCADE,
-    FOREIGN KEY (contentRatingID) REFERENCES ContentRating(contentRatingID)
+    FOREIGN KEY (contentRatingName) REFERENCES ContentRating(contentRatingName)
 );
 
