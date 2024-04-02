@@ -3,7 +3,7 @@ CREATE DATABASE `Music`;
 USE `Music`;
 
 
-CREATE TABLE Creditors ( -- A performer, producer and producer ISA creditor
+CREATE TABLE Creditors ( -- A performer, producer and writer ISA creditor
     CreditorID INT AUTO_INCREMENT,
     Name VARCHAR(255),
     Role VARCHAR(50),
@@ -12,21 +12,21 @@ CREATE TABLE Creditors ( -- A performer, producer and producer ISA creditor
 
 CREATE TABLE Performers (
     CreditorID INT,
-    PerformerURI VARCHAR(20),
+    PerformerURI VARCHAR(200),
     PRIMARY KEY (CreditorID),
     FOREIGN KEY (CreditorID) REFERENCES Creditors(CreditorID)
 );
 
 CREATE TABLE Producers (
     CreditorID INT,
-    ProducerURI VARCHAR(20),
+    ProducerURI VARCHAR(200),
     PRIMARY KEY (CreditorID),
     FOREIGN KEY (CreditorID) REFERENCES Creditors(CreditorID)
 );
 
 CREATE TABLE Writers (
     CreditorID INT,
-    WriterURI VARCHAR(20),
+    WriterURI VARCHAR(200),
     PRIMARY KEY (CreditorID),
     FOREIGN KEY (CreditorID) REFERENCES Creditors(CreditorID)
 );
