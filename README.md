@@ -8,7 +8,7 @@ Phase one of group project of SOEN 363
 ## Clone a specific branch of the Repository
 
 ```bash
-git clone -b branch_name https://github.com/adssib/2Legit2Quit-soen341W2024
+git clone -b branch_name https://github.com/richardbadir/363_P1  
 
 ```
 
