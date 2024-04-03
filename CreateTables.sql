@@ -34,7 +34,7 @@ CREATE TABLE Writers (
 CREATE TABLE Tracks (
     TrackID INT AUTO_INCREMENT,
     TrackName VARCHAR(255),
-    TrackUri VARCHAR(255) UNIQUE,+
+    TrackUri VARCHAR(255) UNIQUE,
     Labels TEXT,
     ReleaseDate DATE,
     Duration INT,
@@ -63,35 +63,15 @@ CREATE TABLE TrendingDates ( -- Weak entity connected to Tracks
 );
 
 CREATE TABLE ContentRating (
-	contentRatingID INT auto_increment, 
     contentRatingName VARCHAR(255),
-    PRIMARY KEY (contentRatingID)
+    PRIMARY KEY (contentRatingName)
 );
 
 CREATE TABLE TrackContentRating ( -- connect the track to the contentRating (one to many)
     TrackID INT,
-    contentRatingID INT,
-    PRIMARY KEY (TrackID, contentRatingID),
+    contentRatingName VARCHAR(255),
+    PRIMARY KEY (TrackID, contentRatingName),
     FOREIGN KEY (TrackID) REFERENCES Tracks(TrackID) ON DELETE CASCADE,
-    FOREIGN KEY (contentRatingID) REFERENCES ContentRating(contentRatingID)
+    FOREIGN KEY (contentRatingName) REFERENCES ContentRating(contentRatingName)
 );
-
-CREATE TABLE TrackInsertionLog ( --keeps track of when a new song is added to the database
-    LogID INT AUTO_INCREMENT PRIMARY KEY,
-    TrackID INT,
-    TrackName VARCHAR(255),
-    InsertionTimestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-DELIMITER $$
-
-CREATE TRIGGER LogTrackInsertion --trigger to keep track when a new song is added.
-AFTER INSERT ON Tracks
-FOR EACH ROW
-BEGIN
-    INSERT INTO TrackInsertionLog (TrackID, TrackName)
-    VALUES (NEW.TrackID, NEW.TrackName);
-END$$
-
-DELIMITER ;
 
