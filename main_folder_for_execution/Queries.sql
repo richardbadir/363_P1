@@ -43,7 +43,7 @@ SELECT * FROM Tracks LEFT JOIN TrackContentRating ON Tracks.TrackID = TrackConte
 #Right Outer Join:
 SELECT * FROM Tracks RIGHT JOIN TrackContentRating ON Tracks.TrackID = TrackContentRating.TrackID;
 
-#Full Join (MySQL doesn't support FULL JOIN directly, but it can be simulated using UNION):
+#Full Join (MySQL does not support FULL JOIN directly, but it can be simulated using UNION):
 SELECT * FROM Tracks LEFT JOIN TrackContentRating ON Tracks.TrackID = TrackContentRating.TrackID
 UNION
 SELECT * FROM Tracks RIGHT JOIN TrackContentRating ON Tracks.TrackID = TrackContentRating.TrackID;
@@ -60,6 +60,22 @@ WHERE EXISTS (
 );
 
 
+-- Identify tracks where at least one of the creditors associated with the track does not appear on any other track in the database.
+SELECT t.TrackName
+FROM Tracks t
+WHERE EXISTS (
+    SELECT 1
+    FROM TrackCreditors tc
+    WHERE tc.TrackID = t.TrackID
+    AND NOT EXISTS (
+        SELECT 1
+        FROM TrackCreditors tc2
+        WHERE tc2.CreditorID = tc.CreditorID
+        AND tc2.TrackID != t.TrackID
+    )
+);
+
+
 #6. Set Operations
 
 #Union:
@@ -67,8 +83,52 @@ SELECT TrackName FROM Tracks WHERE ReleaseDate = '2024-01-18'
 UNION
 SELECT TrackName FROM Tracks WHERE ReleaseDate = '2024-02-09';
 
+#Union equivalence
+SELECT DISTINCT TrackName 
+FROM Tracks 
+WHERE ReleaseDate = '2024-01-18' 
+OR ReleaseDate = '2024-02-09';
+
+
 #Difference (MySQL uses NOT IN or LEFT JOIN ... WHERE IS NULL):
 SELECT TrackName FROM Tracks WHERE ReleaseDate = '2024-01-18' AND TrackID NOT IN (SELECT TrackID FROM Tracks WHERE ReleaseDate = '2024-02-09');
+
+
+#Difference using NOT IN
+-- selecting all creditors who are listed as performers and explicitly excluding those who are also listed as producers.
+SELECT c.Name
+FROM Creditors c
+WHERE c.CreditorID IN (SELECT CreditorID FROM Performers)
+AND c.CreditorID NOT IN (SELECT CreditorID FROM Producers);
+
+-- selecting all creditors who are listed as performers and explicitly excluding those who are also listed as producers.
+#Difference using Left Join… IS NULL
+SELECT c.Name
+FROM Creditors c
+JOIN Performers p ON c.CreditorID = p.CreditorID
+LEFT JOIN Producers pr ON c.CreditorID = pr.CreditorID
+WHERE pr.CreditorID IS NULL;
+
+
+
+
+#Intersect (MySQL does not support INTERSECT but we wrote it since it is demanded by the question)
+-- tracks that have both been trending and have explicit content ratings.
+/*SELECT TrackID FROM TrendingDates
+INTERSECT
+SELECT TrackID FROM TrackContentRating WHERE contentRatingID = (SELECT contentRatingID FROM ContentRating WHERE contentRatingName = 'EXPLICIT');*/
+
+
+#Intersect equivalence
+-- tracks that have both been trending and have explicit content ratings.
+SELECT DISTINCT t.TrackID, t.TrackName
+FROM Tracks t
+JOIN TrendingDates td ON t.TrackID = td.TrackID
+JOIN TrackContentRating tcr ON t.TrackID = tcr.TrackID
+JOIN ContentRating cr ON tcr.contentRatingID = cr.contentRatingID
+WHERE cr.contentRatingName = 'EXPLICIT';
+
+
 
 
 
@@ -123,6 +183,22 @@ WHERE
     AND t1.TrackID = t2.TrackID
 ORDER BY 
     t1.TrackID, t1.TrendingDate;
+
+
+
+
+#Another Overlap constraint 
+-- Showing overlap by demonstrating that a creditor can belong to multiple subtypes at the same time.
+SELECT 
+    c.CreditorID, 
+    c.Name
+FROM 
+    Creditors c
+    INNER JOIN Performers p ON c.CreditorID = p.CreditorID
+    INNER JOIN Producers pr ON c.CreditorID = pr.CreditorID
+    INNER JOIN Writers wr ON c.CreditorID = wr.CreditorID;
+
+
 
 #10. TRIGGER QUERY
 SELECT * FROM TrackInsertionLog ORDER BY InsertionTimestamp DESC; -- Query for the trigger
