@@ -76,3 +76,22 @@ CREATE TABLE TrackContentRating ( -- connect the track to the contentRating (one
     FOREIGN KEY (contentRatingID) REFERENCES ContentRating(contentRatingID)
 );
 
+CREATE TABLE TrackInsertionLog ( --keeps track of when a new song is added to the database
+    LogID INT AUTO_INCREMENT PRIMARY KEY,
+    TrackID INT,
+    TrackName VARCHAR(255),
+    InsertionTimestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+DELIMITER $$
+
+CREATE TRIGGER LogTrackInsertion --trigger to keep track when a new song is added.
+AFTER INSERT ON Tracks
+FOR EACH ROW
+BEGIN
+    INSERT INTO TrackInsertionLog (TrackID, TrackName)
+    VALUES (NEW.TrackID, NEW.TrackName);
+END$$
+
+DELIMITER ;
+
