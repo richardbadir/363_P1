@@ -37,6 +37,7 @@ CREATE TABLE Tracks (
     TrackUri VARCHAR(255) UNIQUE,
     Labels TEXT,
     ReleaseDate DATE,
+    Images MEDIUMBLOB,
     Duration INT,
     PlayCount BIGINT,
     PRIMARY KEY (TrackID),
