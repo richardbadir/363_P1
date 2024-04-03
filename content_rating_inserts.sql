@@ -1,1 +1,0 @@
-INSERT INTO ContentRating (contentRatingName) VALUES ('EXPLICIT'), ('NONE');
