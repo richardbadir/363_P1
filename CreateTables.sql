@@ -63,13 +63,13 @@ CREATE TABLE TrendingDates ( -- Weak entity connected to Tracks
 );
 
 CREATE TABLE ContentRating (
-    contentRatingName VARCHAR(255),
+    contentRatingName ENUM('EXPLICIT', 'NONE'),
     PRIMARY KEY (contentRatingName)
 );
 
 CREATE TABLE TrackContentRating ( -- connect the track to the contentRating (one to many)
     TrackID INT,
-    contentRatingName VARCHAR(255),
+    contentRatingName ENUM('EXPLICIT', 'NONE'),
     PRIMARY KEY (TrackID, contentRatingName),
     FOREIGN KEY (TrackID) REFERENCES Tracks(TrackID) ON DELETE CASCADE,
     FOREIGN KEY (contentRatingName) REFERENCES ContentRating(contentRatingName)
