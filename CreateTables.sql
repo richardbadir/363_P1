@@ -34,7 +34,7 @@ CREATE TABLE Writers (
 CREATE TABLE Tracks (
     TrackID INT AUTO_INCREMENT,
     TrackName VARCHAR(255),
-    TrackUri VARCHAR(255) UNIQUE,
+    TrackUri VARCHAR(255) UNIQUE,+
     Labels TEXT,
     ReleaseDate DATE,
     Duration INT,
