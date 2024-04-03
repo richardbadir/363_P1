@@ -30,7 +30,7 @@ SELECT
 FROM
     Tracks t
     JOIN TrackContentRating tr ON t.TrackID = tr.TrackID
-    JOIN ContentRating cr ON tr.contentRatingID = cr.contentRatingID;
+    JOIN ContentRating cr ON tr.contentRatingName = cr.contentRatingName;
 
 
 
@@ -59,7 +59,7 @@ SELECT
     t.PlayCount,
     (SELECT cr.contentRatingName 
      FROM TrackContentRating tr 
-     JOIN ContentRating cr ON tr.contentRatingID = cr.contentRatingID
+     JOIN ContentRating cr ON tr.contentRatingName = cr.contentRatingName
      WHERE tr.TrackID = t.TrackID LIMIT 1) AS ContentRating,
     GROUP_CONCAT(DISTINCT CONCAT('Performer: ', c.Name) SEPARATOR '; ') AS Performers,
     GROUP_CONCAT(DISTINCT CONCAT('Producer: ', c.Name) SEPARATOR '; ') AS Producers,
